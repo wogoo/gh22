@@ -49,10 +49,15 @@ roteador.put('/:idFornecedor', async (req, res) => {
 })
 
 roteador.delete('/:idFornecedor', async (req, res) => {
-    const id = req.params.idFornecedor
-    const fornecedor = new Fornecedor({id: id})
-    fornecedor.carregar()
-} ) 
+    
+    try {
+        const id = req.params.idFornecedor
+        const fornecedor = new Fornecedor({id: id})
+        await fornecedor.carregar()
+    }catch (err) { 
+        res.send(JSON.stringify({mensagem: err.message}))
+    }
+} )  
 
 
 module.exports = roteador
