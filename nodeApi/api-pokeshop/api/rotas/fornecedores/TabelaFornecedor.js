@@ -14,6 +14,16 @@ module.exports = {
                 id: id
             }
         })
+
+        if(!encontrado) {
+            throw new Error("Fornecedor não encontrado")
+        }
+
         return encontrado
+    },
+    async atualizar(id, dadosParaAtualizar) { 
+        return Modelo.update(dadosParaAtualizar, 
+            { where: { id: id } }
+            )
     }
 }
