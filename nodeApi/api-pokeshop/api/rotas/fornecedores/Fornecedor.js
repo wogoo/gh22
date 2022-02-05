@@ -12,6 +12,7 @@ class Fornecedor {
     }
 
     async criar() {
+        this.validar()
         const result = await TabelaFornecedor.inserir({
             empresa: this.empresa,
             email: this.email,
@@ -51,6 +52,20 @@ class Fornecedor {
         }
 
         await TabelaFornecedor.atualizar(this.id, dadosParaAtualizar)
+    }
+
+    async remover() {
+        return TabelaFornecedor.remover(this.id)
+    }
+    async validar() {
+        const campos = ['empresa', 'email', 'categoria']
+        
+        campos.forEach(campo => {
+            const valor = this[campo]
+
+            if(typeof valor === 'string' && valor.length === 0) {
+                throw new Error(`O campo ${campo} não pode ser vazio!`)}
+        })
     }
 }
 

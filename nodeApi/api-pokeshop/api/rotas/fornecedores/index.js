@@ -4,16 +4,27 @@ const Fornecedor = require('./Fornecedor')
 
 roteador.get('/', async (req, res) => {
     const results = await TabelaFornecedor.listar()
+    res.status(200)
     res.send(
         JSON.stringify(results)
     )
 })
 
 roteador.post('/', async (req, res) => {
-    const dadosRecebidos = req.body
-    const fornecedor = new Fornecedor(dadosRecebidos)
-    await fornecedor.criar()
-    res.send(JSON.stringify(fornecedor))
+    try {
+        const dadosRecebidos = req.body
+        const fornecedor = new Fornecedor(dadosRecebidos)
+        await fornecedor.criar()
+        res.status(201)
+        res.send(JSON.stringify(fornecedor))
+    } catch (err) { 
+        res.status(400)
+        res.send(
+            JSON.stringify({
+                mensagem: err.message
+            })
+        )
+    }
 })
 
 roteador.get('/:idFornecedor', async (req, res) => {
@@ -21,8 +32,10 @@ roteador.get('/:idFornecedor', async (req, res) => {
         const id = req.params.idFornecedor
         const fornecedor = new Fornecedor({id: id})
         await fornecedor.carregar()
+        res.status(200)
         res.send(JSON.stringify(fornecedor))
     } catch (err) {
+        res.status(404)
         res.send(
             JSON.stringify({
                 mensagem: err.message
@@ -38,8 +51,10 @@ roteador.put('/:idFornecedor', async (req, res) => {
     const dados = Object.assign({}, dadosRecebidos, {id: id})
     const fornecedor = new Fornecedor(dados)
     await fornecedor.atualizar()
+    res.status(204)
     res.end()
     } catch (err) {
+        res.status(400)
         res.send(
             JSON.stringify({
                 mensagem: err.message
@@ -48,13 +63,16 @@ roteador.put('/:idFornecedor', async (req, res) => {
     }
 })
 
-roteador.delete('/:idFornecedor', async (req, res) => {
-    
+roteador.delete('/:idFornecedor', async (req, res) => {    
     try {
         const id = req.params.idFornecedor
         const fornecedor = new Fornecedor({id: id})
         await fornecedor.carregar()
+        await fornecedor.remover()
+        res.status(204)
+        res.end()
     }catch (err) { 
+        res.status(404)
         res.send(JSON.stringify({mensagem: err.message}))
     }
 } )  
